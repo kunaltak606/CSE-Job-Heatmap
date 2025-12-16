@@ -6,6 +6,7 @@ Scrapes software jobs, enriches them with geo‑coordinates, stores them in Mong
 ***
 ## Showcase
 ![Main Dashboard UI](image.png)
+https://job-heatmap.vercel.app
 
 ## Tech Stack
 
