@@ -100,7 +100,7 @@ function App() {
       <header className="app-header">
         <div className="app-title-row">
           <span className="live-dot" />
-          <h1>CSE Job Heatmap LIVE [Day 1]</h1>
+          <h1>CSE Job Heatmap LIVE</h1>
         </div>
         <p className="app-subtitle">
           {jobs.length} Jobs Mapped · Top: {stats[0]?.city} ({stats[0]?.count || 0}🔥)
@@ -130,7 +130,7 @@ function App() {
           <div className="chart-wrapper">
             <ResponsiveContainer width="100%" height={220}>
               <BarChart data={stats.slice(0, 7)}>
-                <XAxis dataKey="city" angle={-30} textAnchor="end" height={60} />
+                <XAxis dataKey="city" angle={-30} textAnchor="end" height={50} tick={{ fontSize: 10 }}/>
                 <YAxis hide />
                 <Tooltip />
                 <Bar dataKey="count" radius={[6, 6, 0, 0]} fill="#ff4b5c" />
@@ -152,8 +152,8 @@ function App() {
                   <div key={i} className="job-chip">
                     <div className="job-chip-main">
                       <span className="job-title">
-                        {title.slice(0, 32)}
-                        {title.length > 32 ? '…' : ''}
+                        {title.slice(0, 24)}
+                        {title.length > 24 ? '…' : ''}
                       </span>
                       <span className="job-company">
                         {company} · {loc}
