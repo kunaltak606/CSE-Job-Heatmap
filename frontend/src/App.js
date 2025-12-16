@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -6,6 +6,7 @@ import 'leaflet.heat';
 import axios from 'axios';
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip } from 'recharts';
 import './App.css';
+import mockJobs from './mockJobs';   // <---- NEW
 
 function HeatmapLayer({ points }) {
   const map = useMap();
@@ -33,13 +34,35 @@ function App() {
   const [jobs, setJobs] = useState([]);
   const [stats, setStats] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [usingMock, setUsingMock] = useState(false);   // <---- NEW
 
   useEffect(() => {
     axios
-      .get('http://localhost:5000/api/jobs')
+      .get('http://localhost:5000/api/jobs', { timeout: 5000 })
       .then((res) => {
         const data = Array.isArray(res.data) ? res.data : [];
         setJobs(data);
+        setUsingMock(false);
+
+        const cityStats = {};
+        data.forEach((job) => {
+          if (job.location) {
+            cityStats[job.location] = (cityStats[job.location] || 0) + 1;
+          }
+        });
+
+        const arr = Object.entries(cityStats)
+          .map(([city, count]) => ({ city, count }))
+          .sort((a, b) => b.count - a.count);
+
+        setStats(arr);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.warn('Backend not available, using mock data', err);
+        const data = mockJobs;
+        setJobs(data);
+        setUsingMock(true);
         setLoading(false);
 
         const cityStats = {};
@@ -54,12 +77,9 @@ function App() {
           .sort((a, b) => b.count - a.count);
 
         setStats(arr);
-      })
-      .catch((err) => {
-        console.error(err);
-        setLoading(false);
       });
   }, []);
+
 
   const heatPoints = jobs
     .filter((j) => j.lat && j.lng)
